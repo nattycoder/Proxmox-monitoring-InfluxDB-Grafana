@@ -47,8 +47,8 @@ pfsense-monitoring/
 
 1. **Clone the Repository**
    ```
-   git clone https://github.com/yourusername/pfsense-monitoring.git
-   cd pfsense-monitoring
+   git clone https://github.com/yourusername/network-monitoring-project.git
+   cd network-monitoring-project
    ```
 
 2. **pfSense Configuration**
