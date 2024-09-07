@@ -33,13 +33,6 @@ pfsense-monitoring/
 │   └── telegraf.conf
 ├── docker/
 │   └── docker-compose.yml
-├── grafana/
-│   └── dashboards/
-│       └── network_monitoring.json
-├── prometheus/
-│   └── prometheus.yml
-├── influxdb/
-│   └── influxdb.conf
 └── README.md
 ```
 
@@ -63,10 +56,9 @@ pfsense-monitoring/
 4. **Grafana Configuration**
    - Access Grafana at `http://management-machine-ip:3000`.
    - Add InfluxDB and Prometheus as data sources.
-   - Import the dashboard from `grafana/dashboards/network_monitoring.json`.
 
 5. **Prometheus Configuration**
-   - Ensure `prometheus/prometheus.yml` is correctly set up to scrape pfSense metrics.
+   - Ensure `prometheus.yml` is correctly set up to scrape pfSense metrics.
 
 6. **InfluxDB Configuration**
    - Access InfluxDB at `http://management-machine-ip:8086`.
