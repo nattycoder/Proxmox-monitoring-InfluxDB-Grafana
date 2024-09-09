@@ -130,7 +130,7 @@ This command will bring both containers up in detached mode.
 
 ### 7. Importing a Grafana Dashboard
 
-1. Go to [Grafana Dashboard 15356](https://grafana.com/grafana/dashboards/15356).
+1. Go to [Proxmox Cluster [Flux] Grafana Dashboard (ID 15356)](https://grafana.com/grafana/dashboards/15356).
 2. Copy the dashboard ID.
 3. In Grafana, click the "+" icon and select "Import".
 4. Paste the dashboard ID and click "Load".
