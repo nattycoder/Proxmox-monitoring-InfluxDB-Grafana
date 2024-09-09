@@ -24,7 +24,6 @@ proxmox-monitoring/
 Create a `docker-compose.yml` file with the following content:
 
 ```yaml
-version: '3'
 
 services:
   grafana:
@@ -32,7 +31,7 @@ services:
     container_name: grafana
     restart: always
     ports:
-      - 3030:3000
+      - 3000:3000
     networks:
       - monitor
     volumes:
@@ -64,7 +63,7 @@ volumes:
 
 This Docker Compose file sets up two services:
 
-1. **Grafana**: Running on port 3030, with a volume for persistent storage.
+1. **Grafana**: Running on port 3000, with a volume for persistent storage.
 2. **InfluxDB**: Running on ports 8086 (HTTP) and 8089 (UDP), with a volume for persistent storage.
 
 Both services are connected to a `monitor` network and use external volumes for data persistence.
@@ -117,7 +116,7 @@ This command will bring both containers up in detached mode.
 
 ### 6. Configuring Grafana
 
-1. Access Grafana at `http://<your-host>:3030`.
+1. Access Grafana at `http://<your-host>:3000`.
 2. Log in with default credentials (admin/admin) and set a new password.
 3. Add InfluxDB as a data source:
    - Go to Configuration > Data Sources > Add data source.
