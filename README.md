@@ -146,6 +146,7 @@ To confirm data is flowing:
 
 - Ensure all services are running: `docker-compose ps`
 - Check service logs: `docker-compose logs grafana` or `docker-compose logs influxdb`
+- Refer to [the Screenshots](./screenshots/guide.md) in case something is not clear
 
 ## Contributing
 
