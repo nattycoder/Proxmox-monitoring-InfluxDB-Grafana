@@ -1,6 +1,7 @@
 # Proxmox Monitoring with InfluxDB and Grafana
 
 This project sets up a monitoring solution for Proxmox using InfluxDB for data storage and Grafana for visualization. The setup uses Docker containers for easy deployment and management.
+
 ![Alt text](/screenshots/dashboard_overview_grafana.png)
 
 ## Prerequisites
