@@ -1,1 +1,1 @@
-![Alt text](./load_data.png)
+![Alt text](./load_data_influxdb.png)
