@@ -1,0 +1,35 @@
+
+services:
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    restart: always
+    ports:
+      - 3000:3000
+    networks:
+      - monitor
+    volumes:
+      - "grafana-volume:/var/lib/grafana"
+    user: "1000" # user pid: use id -u to find it, and you can add it like this or via env variables
+
+  influxdb:
+    image: influxdb:latest
+    container_name: influxdb
+    restart: always
+    ports:
+      - 8086:8086
+      - 8089:8089/udp
+    networks:
+      - monitor
+    volumes:
+      - "influxdb-volume:/var/lib/influxdb"
+
+networks:
+  monitor:
+    external: true
+
+volumes:
+  grafana-volume:
+    external: true
+  influxdb-volume:
+    external: true
