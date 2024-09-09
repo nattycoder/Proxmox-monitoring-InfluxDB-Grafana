@@ -13,7 +13,7 @@ This project sets up a monitoring solution for Proxmox using InfluxDB for data s
 ## Project Structure
 
 ```
-proxmox-monitoring/
+Proxmox-monitoring-InfluxDB-Grafana/
 │
 ├── docker
     ├── docker-compose.yml
