@@ -1,1 +1,1 @@
-<img src="/screenshots/load_data.png">
+![Alt text](load_data.png)
