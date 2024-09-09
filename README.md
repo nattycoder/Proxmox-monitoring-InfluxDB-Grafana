@@ -1,97 +1,140 @@
-# Network Monitoring Project
+# Proxmox Monitoring with InfluxDB and Grafana
 
-## Overview
-
-This project sets up a comprehensive network monitoring solution using pfSense, custom Python scripts, Telegraf, InfluxDB, Prometheus, and Grafana. It allows you to collect, store, and visualize network metrics from a pfSense firewall, providing insights into bandwidth consumption, upload and download rates, and other network activities.
-
-## Components
-
-1. **pfSense**: Firewall and network management.
-2. **Custom Python Script**: Collects network metrics from pfSense.
-3. **Telegraf**: Collects and forwards data from the Python script.
-4. **InfluxDB**: Time-series database for storing metrics.
-5. **Prometheus**: Metrics collection and storage system.
-6. **Grafana**: Data visualization and dashboard creation.
+This project sets up a monitoring solution for Proxmox using InfluxDB for data storage and Grafana for visualization. The setup uses Docker containers for easy deployment and management.
 
 ## Prerequisites
 
-- pfSense installed and configured with LAN and DHCP setup
-- VMs deployed as clients within the LAN
-- Docker and Docker Compose installed on a management machine
-- Access to pfSense shell for script deployment and Telegraf installation
+- Docker and Docker Compose installed on your system
+- A running Proxmox server
+- Basic understanding of Docker, InfluxDB, and Grafana
 
 ## Project Structure
 
 ```
-pfsense-monitoring/
-├── pfsense/
-│   ├── config/
-│   │   └── firewall_rules.txt
-│   └── scripts/
-│       └── network_metrics.py
-├── telegraf/
-│   └── telegraf.conf
-├── docker/
-│   └── docker-compose.yml
+proxmox-monitoring/
+│
+├── docker-compose.yml
 └── README.md
 ```
 
 ## Setup Instructions
 
-1. **Clone the Repository**
-   ```
-   git clone https://github.com/yourusername/network-monitoring-project.git
-   cd network-monitoring-project
-   ```
+### 1. Docker Compose Configuration
 
-2. **pfSense Configuration**
-   - Copy `pfsense/scripts/network_metrics.py` to your pfSense machine.
-   - Configure firewall rules as described in `pfsense/config/firewall_rules.txt`.
-   - Install Telegraf on pfSense and copy `telegraf/telegraf.conf` to the appropriate location.
+Create a `docker-compose.yml` file with the following content:
 
-3. **Docker Setup**
-   - Navigate to the `docker` directory.
-   - Run `docker-compose up -d` to start InfluxDB, Prometheus, and Grafana.
+```yaml
+version: '3'
 
-4. **Grafana Configuration**
-   - Access Grafana at `http://management-machine-ip:3000`.
-   - Add InfluxDB and Prometheus as data sources.
+services:
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    restart: always
+    ports:
+      - 3030:3000
+    networks:
+      - monitor
+    volumes:
+      - "grafana-volume:/var/lib/grafana"
+    user: "1000" # user pid: use id -u to find it, and you can add it like this or via env variables
 
-5. **Prometheus Configuration**
-   - Ensure `prometheus.yml` is correctly set up to scrape pfSense metrics.
+  influxdb:
+    image: influxdb:latest
+    container_name: influxdb
+    restart: always
+    ports:
+      - 8086:8086
+      - 8089:8089/udp
+    networks:
+      - monitor
+    volumes:
+      - "influxdb-volume:/var/lib/influxdb"
 
-6. **InfluxDB Configuration**
-   - Access InfluxDB at `http://management-machine-ip:8086`.
-   - Set up an organization and bucket for the pfSense metrics.
-   - Configure Telegraf to write to this bucket.
+networks:
+  monitor:
 
-## Usage
+volumes:
+  grafana-volume:
+    external: true
+  influxdb-volume:
+    external: true
+```
 
-Once set up, you can access the Grafana dashboard to monitor your network metrics:
+This Docker Compose file sets up two services:
 
-1. Open a web browser and navigate to `http://management-machine-ip:3000`.
-2. Log in to Grafana (default credentials are admin/admin).
-3. Select the "PfSense Network Monitoring" dashboard.
-4. View real-time and historical data on bandwidth consumption, upload and download rates, and other network metrics.
+1. **Grafana**: Running on port 3030, with a volume for persistent storage.
+2. **InfluxDB**: Running on ports 8086 (HTTP) and 8089 (UDP), with a volume for persistent storage.
 
-## Customization
+Both services are connected to a `monitor` network and use external volumes for data persistence.
 
-- Modify `network_metrics.py` to collect additional metrics as needed.
-- Adjust the Grafana dashboard (`network_monitoring.json`) to display metrics relevant to your needs.
-- Update `telegraf.conf` to change data collection intervals or add new inputs/outputs.
+### 2. Starting the Services
+
+Run the following command to start the services:
+
+```bash
+docker-compose up -d
+```
+
+### 3. Configuring InfluxDB
+
+1. Access InfluxDB at `http://<your-host>:8086`.
+2. Set up an organization (e.g., "HomeServer") and a bucket (e.g., "proxmox").
+3. Create an API token:
+   - Go to "Load Data" > "API Tokens".
+   - Copy the token associated with your user.
+
+### 4. Setting up InfluxDB in Proxmox
+
+1. In Proxmox, go to Datacenter > Metric Server.
+2. Click "Add" and select "InfluxDB".
+3. Fill in the details:
+   - Name: Choose a name
+   - Server: Your InfluxDB host IP or hostname
+   - Port: 8086
+   - Protocol: HTTP
+   - Organization: Your InfluxDB organization name
+   - Bucket: Your InfluxDB bucket name
+   - Token: Paste your API token
+
+### 5. Configuring Grafana
+
+1. Access Grafana at `http://<your-host>:3030`.
+2. Log in with default credentials (admin/admin) and set a new password.
+3. Add InfluxDB as a data source:
+   - Go to Configuration > Data Sources > Add data source.
+   - Select InfluxDB.
+   - Change Query Language to "Flux".
+   - Set the URL to your InfluxDB host and port.
+   - Disable Basic Auth and enable Skip TLS Verify.
+   - Fill in the InfluxDB Details with your organization, token, and default bucket.
+   - Click "Save & Test".
+
+### 6. Importing a Grafana Dashboard
+
+1. Go to [Grafana Dashboard 15356](https://grafana.com/grafana/dashboards/15356).
+2. Copy the dashboard ID.
+3. In Grafana, click the "+" icon and select "Import".
+4. Paste the dashboard ID and click "Load".
+5. Select your InfluxDB data source and click "Import".
+
+## Verification
+
+To confirm data is flowing:
+
+1. In InfluxDB, go to "Data Explorer".
+2. Select your bucket and check for data points.
 
 ## Troubleshooting
 
-- Ensure all firewall rules are correctly set up to allow traffic between components.
-- Check Telegraf logs on pfSense for any data collection or forwarding issues.
-- Verify that Prometheus is successfully scraping metrics from pfSense.
-- Review InfluxDB logs to ensure data is being received and stored correctly.
+- Ensure all services are running: `docker-compose ps`
+- Check service logs: `docker-compose logs grafana` or `docker-compose logs influxdb`
+- Verify network connectivity between Proxmox and InfluxDB
 
 ## Contributing
 
-Contributions to this project are welcome! Please fork the repository and submit a pull request with your changes.
+Feel free to open issues or submit pull requests for improvements or bug fixes.
 
-## Acknowledgments
+## License
 
-- pfSense community for their extensive documentation and support.
-- InfluxData, Prometheus, and Grafana teams for their excellent open-source tools.
+[MIT License](LICENSE)
