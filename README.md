@@ -53,6 +53,7 @@ services:
 
 networks:
   monitor:
+    external: true
 
 volumes:
   grafana-volume:
@@ -68,15 +69,32 @@ This Docker Compose file sets up two services:
 
 Both services are connected to a `monitor` network and use external volumes for data persistence.
 
-### 2. Starting the Services
+### 2. Creating Docker Volumes and Network
 
-Run the following command to start the services:
+Before starting the services, you need to create the Docker volumes and network referenced in the `docker-compose.yml` file. Run the following commands:
+
+```bash
+# Create Docker volumes
+docker volume create influxdb-volume
+docker volume create grafana-volume
+
+# Create Docker network
+docker network create monitor
+```
+
+These commands create the necessary volumes for data persistence and a shared network for communication between the containers.
+
+### 3. Starting the Services
+
+After creating the volumes and network, you can start the services by running:
 
 ```bash
 docker-compose up -d
 ```
 
-### 3. Configuring InfluxDB
+This command will bring both containers up in detached mode.
+
+### 4. Configuring InfluxDB
 
 1. Access InfluxDB at `http://<your-host>:8086`.
 2. Set up an organization (e.g., "HomeServer") and a bucket (e.g., "proxmox").
@@ -84,7 +102,7 @@ docker-compose up -d
    - Go to "Load Data" > "API Tokens".
    - Copy the token associated with your user.
 
-### 4. Setting up InfluxDB in Proxmox
+### 5. Setting up InfluxDB in Proxmox
 
 1. In Proxmox, go to Datacenter > Metric Server.
 2. Click "Add" and select "InfluxDB".
@@ -97,7 +115,7 @@ docker-compose up -d
    - Bucket: Your InfluxDB bucket name
    - Token: Paste your API token
 
-### 5. Configuring Grafana
+### 6. Configuring Grafana
 
 1. Access Grafana at `http://<your-host>:3030`.
 2. Log in with default credentials (admin/admin) and set a new password.
@@ -110,7 +128,7 @@ docker-compose up -d
    - Fill in the InfluxDB Details with your organization, token, and default bucket.
    - Click "Save & Test".
 
-### 6. Importing a Grafana Dashboard
+### 7. Importing a Grafana Dashboard
 
 1. Go to [Grafana Dashboard 15356](https://grafana.com/grafana/dashboards/15356).
 2. Copy the dashboard ID.
