@@ -147,12 +147,7 @@ To confirm data is flowing:
 
 - Ensure all services are running: `docker-compose ps`
 - Check service logs: `docker-compose logs grafana` or `docker-compose logs influxdb`
-- Verify network connectivity between Proxmox and InfluxDB
 
 ## Contributing
 
 Feel free to open issues or submit pull requests for improvements or bug fixes.
-
-## License
-
-[MIT License](LICENSE)
