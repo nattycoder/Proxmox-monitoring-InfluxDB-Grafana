@@ -15,7 +15,10 @@ This project sets up a monitoring solution for Proxmox using InfluxDB for data s
 ```
 proxmox-monitoring/
 │
-├── docker-compose.yml
+├── docker
+    ├── docker-compose.yml
+├── screenshots
+    ├── guide.md
 └── README.md
 ```
 
